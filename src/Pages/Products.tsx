@@ -76,10 +76,8 @@ const ProductCatalog = () => {
   // -------------------------
   const getAccessToken = async () => {
     const url = "https://orgfarm-55be5b4cd7-dev-ed.develop.my.salesforce.com/services/oauth2/token";
-    const CLIENT_ID = import.meta.env.VITE_SF_CLIENT_ID;
-const CLIENT_SECRET = import.meta.env.VITE_SF_CLIENT_SECRET;
-    const clientId = CLIENT_ID || "";
-    const clientSecret = CLIENT_SECRET || "";
+    const clientId = "3MVG9HtWXcDGV.nEjGlOSARSUWdhaRh3M.MZMxCFek1KeKIjSU61s7elcUSSScL4Jfk.rh.ji7og4gPabrfSA";
+    const clientSecret = "3E5E44662F5C43535B785D740B237868AA86DFC6AC4709037876F6223B419354";
 
     const params = new URLSearchParams();
     params.append("grant_type", "client_credentials");
