@@ -116,7 +116,7 @@ const ProductCatalog = () => {
         UnitPrice
       FROM PricebookEntry
       WHERE Pricebook2.IsStandard = TRUE
-      AND Product2.Family = 'ARS'
+      AND Product2.Family = 'DMS'
       AND IsActive = TRUE
       AND Product2.IsActive = TRUE
     `;
@@ -325,7 +325,7 @@ const ProductCatalog = () => {
       {/* SEARCH + FILTER */}
       <div className="grid grid-cols-12 gap-3">
         <div className="col-span-12 sm:col-span-10 relative">
-          <Search className="absolute left-4 top-3 text-cyan-400" />
+          <Search className="absolute left-4 top-2 text-cyan-400" />
           <Input
             className="bg-[#0d1625] border-cyan-500/20 text-cyan-200 pl-12 rounded-xl shadow-[0_0_12px_rgba(0,255,255,0.15)]"
             placeholder="Search products..."
