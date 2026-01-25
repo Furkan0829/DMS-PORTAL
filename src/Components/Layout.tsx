@@ -3,20 +3,22 @@ import { Outlet } from "react-router-dom";
  
 const Layout = () => {
   return (
-    <div className="fixed inset-0 overflow-hidden">
-      <div className="flex h-screen w-screen overflow-hidden">
-      {/* Sidebar (only scrollable area) */}
-      <Sidebar />
+    <div className="flex h-screen w-full bg-[#020817] overflow-hidden">
  
-      {/* Main content (NO SCROLL EVER) */}
-      <div className="flex-1 bg-[#020817] overflow-hidden">
-        <div className="h-full w-full pt-4 pl-5 pr-6 box-border overflow-hidden">
-          <Outlet />
-        </div>
+      {/* Sidebar - hidden on mobile */}
+      <div className="hidden lg:block">
+        <Sidebar />
       </div>
+ 
+      {/* Main content */}
+      <div className="flex-1 min-w-0 overflow-y-auto overflow-x-auto">
+        <Outlet />
+      </div>
+ 
     </div>
     </div>
   );
 };
  
 export default Layout;
+ 
