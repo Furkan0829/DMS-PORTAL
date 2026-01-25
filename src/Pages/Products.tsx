@@ -13,7 +13,7 @@ import {
   Filter,
   Menu,
   Boxes,
-  Layers
+  Layers,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -44,6 +44,7 @@ interface Product {
   image: string;
   rating: number;
   stock: number;
+  quantity?: number;
 }
 
 interface CartItem {
@@ -52,6 +53,8 @@ interface CartItem {
   price: number;
   quantity: number;
   image?: string;
+  rating?: number;
+  stock?: number;
 }
 
 const ProductCatalog = () => {
@@ -160,25 +163,34 @@ const ProductCatalog = () => {
     init();
   }, []);
 
-  // ADD CART
   const addToCart = (p: Product) => {
     const exists = cartItems.find((i) => i.id === p.id);
 
+    let updatedCart;
+
     if (exists) {
-      exists.quantity += 1;
-      setCartItems([...cartItems]);
+      updatedCart = cartItems.map((item) =>
+        item.id === p.id
+          ? { ...item, quantity: item.quantity + (p.quantity ?? 1) }
+          : item,
+      );
     } else {
-      setCartItems([
+      updatedCart = [
         ...cartItems,
         {
           id: p.id,
           name: p.name,
           price: p.offerPrice,
-          quantity: 1,
+          quantity: p.quantity ? p.quantity : 1,
           image: p.image,
+          rating: p.rating, // ✅ add this
+          stock: p.stock, // ✅ add this
         },
-      ]);
+      ];
     }
+
+    setCartItems(updatedCart);
+    localStorage.setItem("cartItems", JSON.stringify(updatedCart));
 
     toast.success(`${p.name} added to cart`);
   };
@@ -196,96 +208,80 @@ const ProductCatalog = () => {
 
   return (
     <div className="space-y-6 pb-10 ml-5 mt-5 mr-2 overflow-x-hidden">
-      {/* MOBILE HEADER */}
-      <div className="flex items-center justify-between sm:hidden">
-        <button
-          onClick={() => {
-            /*toggleSidebar()*/
-          }}
-          className="p-3 rounded-xl bg-[#0e1b2c] border border-cyan-500/20 shadow-[0_0_10px_rgba(0,255,255,0.4)]"
-        >
-          <Menu className="text-cyan-400" size={24} />
-        </button>
-
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="mt-4 sm:mt-6 h-10 text-black
-                    flex items-center gap-2
-                    bg-gradient-to-r from-cyan-400 to-purple-500 
-                    shadow-[0_0_25px_rgba(34,211,238,0.45)]"
-        >
-          + Add Product
-        </button>
-      </div>
-
       {/* TITLE */}
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-cyan-400 mt-4">Products</h1>
-          <p className="text-gray-400">
+          <h1 className="text-2xl sm:text-3xl font-bold text-cyan-400 mt-2 sm:mt-4">
+            Products
+          </h1>
+          <p className="text-gray-400 text-sm sm:text-base">
             Browse and manage your product catalog
           </p>
         </div>
 
         <button
           onClick={() => navigate("/dashboard")}
-          className="px-4 py-2 bg-gradient-to-r from-cyan-400 to-purple-600 text-black rounded-xl shadow-[0_0_25px_rgba(34,211,238,0.45)] hover:-translate-y-1 transition"
+          className="
+      w-full sm:w-auto
+      px-4 py-2 
+      bg-gradient-to-r from-cyan-400 to-purple-600 
+      text-black rounded-xl 
+      shadow-[0_0_25px_rgba(34,211,238,0.45)]
+      hover:-translate-y-1 transition
+    "
         >
           + Add Product
         </button>
       </div>
 
-
-
-{/* STATS */}
-<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-  {[
-    {
-      label: "Total Products",
-      value: products.length,
-      iconBg: "bg-cyan-700/20",
-      iconColor: "text-cyan-400",
-      icon: <Boxes className="h-8 w-8" />,
-    },
-    {
-      label: "In Stock",
-      value: products.reduce((a, b) => a + b.stock, 0),
-      iconBg: "bg-green-700/20",
-      iconColor: "text-green-400",
-      icon: <Layers className="h-8 w-8" />,
-    },
-    {
-      label: "Avg Rating",
-      value: (
-        products.reduce((a, b) => a + b.rating, 0) / products.length
-      ).toFixed(1),
-      iconBg: "bg-purple-700/20",
-      iconColor: "text-purple-400",
-      icon: <Star className="h-8 w-8" />,
-    },
-  ].map((item, idx) => (
-    <div
-      key={idx}
-      className="border border-cyan-500/20 shadow-[0_0_20px_rgba(0,255,255,0.10)] 
+      {/* STATS */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {[
+          {
+            label: "Total Products",
+            value: products.length,
+            iconBg: "bg-cyan-700/20",
+            iconColor: "text-cyan-400",
+            icon: <Boxes className="h-8 w-8" />,
+          },
+          {
+            label: "In Stock",
+            value: products.reduce((a, b) => a + b.stock, 0),
+            iconBg: "bg-green-700/20",
+            iconColor: "text-green-400",
+            icon: <Layers className="h-8 w-8" />,
+          },
+          {
+            label: "Avg Rating",
+            value: (
+              products.reduce((a, b) => a + b.rating, 0) / products.length
+            ).toFixed(1),
+            iconBg: "bg-purple-700/20",
+            iconColor: "text-purple-400",
+            icon: <Star className="h-8 w-8" />,
+          },
+        ].map((item, idx) => (
+          <div
+            key={idx}
+            className="border border-cyan-500/20 shadow-[0_0_20px_rgba(0,255,255,0.10)] 
                  rounded-2xl p-4 flex items-center gap-4"
-    >
-      {/* ICON */}
-      <div
-        className={`h-14 w-14 rounded-xl flex items-center justify-center 
+          >
+            {/* ICON */}
+            <div
+              className={`h-14 w-14 rounded-xl flex items-center justify-center 
                    ${item.iconBg} ${item.iconColor}`}
-      >
-        {item.icon}
-      </div>
+            >
+              {item.icon}
+            </div>
 
-      {/* TEXT */}
-      <div>
-        <p className="text-white text-3xl font-bold">{item.value}</p>
-        <p className="text-gray-400 text-sm">{item.label}</p>
+            {/* TEXT */}
+            <div>
+              <p className="text-white text-3xl font-bold">{item.value}</p>
+              <p className="text-gray-400 text-sm">{item.label}</p>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
-  ))}
-</div>
-
 
       {/* SEARCH + FILTER */}
       <div className="grid grid-cols-12 gap-3">

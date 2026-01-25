@@ -44,7 +44,7 @@ export default function Settings() {
   const [timeoutValue, setTimeoutValue] = useState("30");
 
   return (
-    <div className="space-y-10 pb-20">
+    <div className="space-y-10 pb-20 ml-5 mr-2 mt-5 overflow-x-auto">
       {/* PAGE HEADER */}
       <div>
         <h1 className="text-4xl font-bold text-cyan-300 tracking-wide">
@@ -309,8 +309,8 @@ const NeonToggle = ({ defaultOn = true }) => {
         relative w-14 h-7 rounded-full cursor-pointer transition-all duration-300 
         ${
           on
-            ? "bg-cyan-300 shadow-[0_0_15px_rgba(0,255,255,0.7)]"
-            : "bg-[#0d1625] border border-cyan-500/30 shadow-[0_0_8px_rgba(0,255,255,0.3)]"
+            ? "bg-cyan-300 shadow-[0_0_10px_rgba(0,255,255,0.7)]"
+            : "bg-[#0d1625] border border-cyan-500/30 shadow-[0_0_0px_rgba(0,255,255,0.3)]"
         }
       `}
     >

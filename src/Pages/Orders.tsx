@@ -5,9 +5,9 @@ import { Search, Eye, Truck, Package, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const ORDER_TABS = [
-  { img : Package, key: "Contract", label: "Contract Orders" },
-  { img : Clock, key: "Secondary", label: "Secondary Orders" },
-  { img : Truck, key: "Dispatched", label: "Dispatched Orders" },
+  { img: Package, key: "Contract", label: "Contract Orders" },
+  { img: Clock, key: "Secondary", label: "Secondary Orders" },
+  { img: Truck, key: "Dispatched", label: "Dispatched Orders" },
 ];
 
 interface OrderRecord {
@@ -40,7 +40,7 @@ const Orders = () => {
     if (activeTab === "Secondary") return RT_Secondary;
     if (activeTab === "Dispatched") return RT_Dispatched;
     return "";
-  }
+  };
 
   // -------------------------------
   // 1) Get Salesforce Access Token
@@ -50,18 +50,18 @@ const Orders = () => {
     params.append("grant_type", "client_credentials");
     params.append(
       "client_id",
-      "3MVG9HtWXcDGV.nEjGlOSARSUWdhaRh3M.MZMxCFek1KeKIjSU61s7elcUSSScL4Jfk.rh.ji7og4gPabrfSA"
+      "3MVG9HtWXcDGV.nEjGlOSARSUWdhaRh3M.MZMxCFek1KeKIjSU61s7elcUSSScL4Jfk.rh.ji7og4gPabrfSA",
     );
     params.append(
       "client_secret",
-      "3E5E44662F5C43535B785D740B237868AA86DFC6AC4709037876F6223B419354"
+      "3E5E44662F5C43535B785D740B237868AA86DFC6AC4709037876F6223B419354",
     );
 
     try {
       const res = await axios.post(
         "https://orgfarm-55be5b4cd7-dev-ed.develop.my.salesforce.com/services/oauth2/token",
         params,
-        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+        { headers: { "Content-Type": "application/x-www-form-urlencoded" } },
       );
 
       setToken(res.data.access_token);
@@ -75,19 +75,16 @@ const Orders = () => {
   // -------------------------------
   // 2) Fetch ALL required fields
   // -------------------------------
-  const FULL_ORDER_FIELDS = `
-    Id, OrderNumber, Account.Name, AccountId,
+
+  const fetchOrders = async (accessToken: string) => {
+    const query = `
+      SELECT Id, OrderNumber, Account.Name, AccountId,
     EffectiveDate, EndDate, Status,
     TotalAmount, Pricebook2Id, Type,
     PoNumber, PoDate, Description,
     BillingAddress, ShippingAddress,
     CompanyAuthorizedById, CustomerAuthorizedById,
     RecordType.Id
-  `;
-
-  const fetchOrders = async (accessToken: string) => {
-    const query = `
-      SELECT ${FULL_ORDER_FIELDS}
       FROM Order
       WHERE RecordType.Id IN ('${RT_Contract}', '${RT_Secondary}', '${RT_Dispatched}')
       ORDER BY CreatedDate DESC
@@ -95,12 +92,11 @@ const Orders = () => {
 
     const res = await axios.get(
       `https://orgfarm-55be5b4cd7-dev-ed.develop.my.salesforce.com/services/data/v62.0/query?q=${encodeURIComponent(
-        query
+        query,
       )}`,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      { headers: { Authorization: `Bearer ${accessToken}` } },
     );
     console.log(res.data);
-    
 
     setOrders(res.data.records);
   };
@@ -124,7 +120,7 @@ const Orders = () => {
       data = data.filter(
         (o) =>
           o.OrderNumber.toLowerCase().includes(search.toLowerCase()) ||
-          o.Account?.Name?.toLowerCase().includes(search.toLowerCase())
+          o.Account?.Name?.toLowerCase().includes(search.toLowerCase()),
       );
     }
 
@@ -157,9 +153,15 @@ const Orders = () => {
   // -------------------------------
   // COUNTS for tabs
   // -------------------------------
-  const countContract = orders.filter((o) => o.RecordType.Id === RT_Contract).length;
-  const countSecondary = orders.filter((o) => o.RecordType.Id === RT_Secondary).length;
-  const countDispatched = orders.filter((o) => o.RecordType.Id === RT_Dispatched).length;
+  const countContract = orders.filter(
+    (o) => o.RecordType.Id === RT_Contract,
+  ).length;
+  const countSecondary = orders.filter(
+    (o) => o.RecordType.Id === RT_Secondary,
+  ).length;
+  const countDispatched = orders.filter(
+    (o) => o.RecordType.Id === RT_Dispatched,
+  ).length;
 
   const getCount = (type: string) => {
     if (type === "Contract") return countContract;
@@ -175,26 +177,33 @@ const Orders = () => {
       <p className="text-gray-400 -mt-2">Manage all your distribution orders</p>
 
       {/* TABS */}
-      <div className="flex gap-3 flex-wrap">
+      <div className="flex flex-wrap gap-2 sm:gap-3 w-full">
         {ORDER_TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => setActiveTab(t.key)}
-            className={`flex px-6 py-3 rounded-xl text-sm font-medium border transition-all duration-300
-              ${
-                activeTab === t.key
-                  ? "bg-gradient-to-r from-[#0CD5FB] via-[#359AE8] to-[#6B54D6] text-black border-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.4)] hover:-translate-y-1"
-                  : "bg-[#0d1625] border-cyan-500/10 text-gray-300 hover:border-cyan-400 hover:text-white hover:-translate-y-1"
-              }
-            `}
+            className={`
+        flex items-center justify-center
+        px-4 py-2
+        rounded-xl text-xs sm:text-sm font-medium w-auto
+        transition-all duration-300 border min-w-[90px]
+        ${
+          activeTab === t.key
+            ? "bg-gradient-to-r from-[#0CD5FB] via-[#359AE8] to-[#6B54D6] text-black border-cyan-400 shadow-[0_0_15px_rgba(0,255,255,0.4)]"
+            : "bg-[#0d1625] border-cyan-500/10 text-gray-300 hover:border-cyan-400 hover:text-white"
+        }
+      `}
           >
-            {t.img && <t.img size={18} className=" mr-2 align-center" />} {t.label} ({getCount(t.key)})
+            {t.img && <t.img size={16} className="mr-1" />}
+            <span className="whitespace-nowrap">
+              {t.label} ({getCount(t.key)})
+            </span>
           </button>
         ))}
       </div>
 
       {/* SEARCH BAR */}
-      <div className="relative w-full">
+      <div className="relative w-full ">
         <Search className="absolute left-4 top-3 text-cyan-400" />
         <input
           className="w-full pl-12 pr-4 py-3 bg-[#0d1625] border border-cyan-500/20 text-cyan-200 rounded-xl"

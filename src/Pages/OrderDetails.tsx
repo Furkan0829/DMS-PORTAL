@@ -93,6 +93,8 @@ const OrderDetails = () => {
         fetchOrder(token!);
       } else {
         toast.error(res.data.message);
+        console.log(res.data.message);
+        
       }
     } catch (err) {
       console.error(err);
@@ -132,7 +134,7 @@ const OrderDetails = () => {
   `;
 
   return (
-    <div className=" w-full min-h-screen bg-[#020817] px-2 py-4 sm:py-6 space-y-6">
+    <div className=" ml-5 mr-2 min-h-screen bg-[#020817] px-2 py-4 sm:py-6 space-y-6">
       {/* HEADER */}
       <div
         className="
@@ -347,7 +349,7 @@ const OrderDetails = () => {
         </div>
 
         {/* TOTALS BLOCK */}
-        <div className="p-6 bg-slate-950 border-t border-cyan-500/20">
+        <div className="p-6 bg-slate-950">
           <div className="flex justify-between text-gray-300 mb-2">
             <span>Subtotal</span>
             <span>₹{subtotal.toLocaleString()}</span>
@@ -365,7 +367,7 @@ const OrderDetails = () => {
 
           <div className="border-b border-cyan-500/10 my-4"></div>
 
-          <div className="flex justify-between text-xl font-bold">
+          <div className="flex justify-between text-gray-300 text-xl font-bold">
             <span>Total</span>
             <span className="text-cyan-300">
               ₹{grandTotal.toLocaleString()}
