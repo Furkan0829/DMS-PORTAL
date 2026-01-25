@@ -1,7 +1,5 @@
-import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Button } from "./ui/button";
-
+import { useState } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
@@ -12,103 +10,229 @@ import {
   Users,
   Boxes,
   ShieldCheck,
-  List,
+  Tag,
   Receipt,
   User,
   Settings,
   LogOut,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
 } from "lucide-react";
 
-const navItems = [
-  { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { name: "Products", path: "/products", icon: Package },
-  { name: "Cart", path: "/cart", icon: ShoppingCart },
-  { name: "Orders", path: "/orders", icon: ClipboardList },
-  { name: "Inventory", path: "/inventory", icon: Warehouse },
-  { name: "GRN", path: "/grn", icon: FileText },
-  { name: "Lead Generation", path: "/leads", icon: Users },
-  { name: "Stock Management", path: "/stock", icon: Boxes },
-  { name: "Warranty Registration", path: "/warranty", icon: ShieldCheck },
-  { name: "Price List", path: "/price-list", icon: List },
-  { name: "Invoice", path: "/invoice", icon: Receipt },
-  { name: "Profile", path: "/profile", icon: User },
-  { name: "Settings", path: "/settings", icon: Settings },
+const menuItems = [
+  { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+  { name: "Products", icon: Package, path: "/products" },
+  { name: "Cart", icon: ShoppingCart, path: "/cart" },
+  { name: "Orders", icon: ClipboardList, path: "/orders" },
+  { name: "Inventory", icon: Warehouse, path: "/inventory" },
+  { name: "GRN", icon: FileText, path: "/grn" },
+  { name: "Lead Generation", icon: Users, path: "/leads" },
+  { name: "Stock Management", icon: Boxes, path: "/stock" },
+  { name: "Warranty Registration", icon: ShieldCheck, path: "/warranty" },
+  { name: "Price List", icon: Tag, path: "/price" },
+  { name: "Invoice", icon: Receipt, path: "/invoice" },
+  { name: "Profile", icon: User, path: "/profile" },
+  { name: "Settings", icon: Settings, path: "/settings" },
 ];
 
-const Sidebar: React.FC = () => {
+const Sidebar = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    // Clear auth tokens/session here if required
-    localStorage.clear();
-
-    // Navigate to login page
-    navigate("/");
-  };
+  const location = useLocation();
 
   return (
-    <aside className="h-screen w-[280px] bg-gradient-to-b from-[#050b16] via-[#060f1f] to-[#040914] text-gray-300 flex flex-col border-r border-[#0b1f33]">
-      {/* Header */}
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-[#0b1f33]">
-        <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#00c2ff] to-[#005cff] flex items-center justify-center shadow-lg">
-          <span className="text-white font-bold text-lg">▣</span>
-        </div>
-        <div>
-          <h1 className="text-white font-semibold text-lg leading-tight">
-            DMS Portal
-          </h1>
-          <p className="text-xs text-gray-400">Distributor Management</p>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 scrollbar-thin scrollbar-thumb-[#0ea5e9]/40 scrollbar-track-transparent">
-        <ul className="space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <li key={item.name}>
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium ${
-                      isActive
-                        ? "bg-gradient-to-r from-[#0ea5e9]/30 to-[#0ea5e9]/10 text-white shadow-md"
-                        : "text-gray-300 hover:bg-white/5 hover:text-white"
-                    }`
-                  }
-                >
-                  <Icon size={20} />
-                  {item.name}
-                </NavLink>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-
-      {/* Footer */}
-      <div className="px-4 py-4 border-t border-[#0b1f33]">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#00c2ff] to-[#7c3aed] flex items-center justify-center shadow-md">
-            <User size={18} className="text-white" />
-          </div>
-          <div>
-            <p className="text-sm text-white font-semibold">John Distributor</p>
-            <p className="text-xs text-gray-400">Distributor</p>
-          </div>
-        </div>
-
-        <Button
-          onClick={handleLogout}
-          variant="destructive"
-          className="w-full rounded-xl flex items-center gap-2 justify-center"
+    <>
+      {/* MOBILE HEADER */}
+      <div className="lg:hidden flex items-center  px-4 py-3 border-b border-cyan-500/20 fixed top-0 left-0 right-0 z-50">
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="
+          w-11 h-11
+          flex items-center justify-center
+          rounded-xl
+          bg-[#071521]
+          border border-cyan-400/40
+          shadow-[0_0_12px_rgba(34,211,238,0.25)]
+          hover:shadow-[0_0_16px_rgba(34,211,238,0.35)]
+          transition
+          "
         >
-          <LogOut size={18} />
-          Logout
-        </Button>
+          <Menu className="text-cyan-400" size={20} />
+        </button>
       </div>
-    </aside>
+
+      {/* BACKDROP */}
+      {mobileOpen && (
+        <div
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+        />
+      )}
+
+      {/* SIDEBAR */}
+      <aside
+        className={`
+        fixed lg:relative top-0 left-0 z-50
+        h-screen
+        bg-gradient-to-b from-[#050B14] via-[#040A14] to-[#02060C]
+        border-r border-cyan-500/10
+        flex flex-col
+        transition-all duration-300
+        ${collapsed ? "w-[90px]" : "w-[300px]"}
+        ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+        `}
+      >
+        {/* LOGO */}
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-cyan-500/10">
+          <div
+            className="
+    w-11 h-11
+    rounded-xl
+    bg-gradient-to-br from-violet-500 via-cyan-400 to-blue-500
+    flex items-center justify-center
+    transition-transform duration-300
+    hover:rotate-6 hover:scale-105
+    "
+          >
+            <Package className="text-black" size={22} />
+          </div>
+
+          {!collapsed && (
+            <div className="flex flex-col justify-center text-start">
+              <p className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-cyan-400 to-blue-400 font-semibold text-lg">
+                DMS Portal
+              </p>
+
+              <span className="text-sm text-[#8FAFC9]">
+                Distributor Management
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* MENU + SCROLL AREA */}
+        <div className="relative flex flex-col flex-1 min-h-0">
+          {/* CENTER ARROW */}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="
+            absolute
+            right-[-14px]
+            top-1/2
+            -translate-y-1/2
+            z-50
+            bg-[#071521]
+            border border-cyan-400/40
+            rounded-full
+            p-1.5
+            hover:bg-cyan-500/10
+            "
+          >
+            {collapsed ? (
+              <ChevronRight className="text-cyan-400" size={18} />
+            ) : (
+              <ChevronLeft className="text-cyan-400" size={18} />
+            )}
+          </button>
+
+          {/* MENU LIST (SCROLL WORKING) */}
+          <div className="sidebar-scroll flex-1 min-h-0 overflow-y-auto px-3 pr-4">
+            {menuItems.map((item, index) => {
+              const Icon = item.icon;
+              const isActive = location.pathname.startsWith(item.path);
+
+              return (
+                <NavLink
+                  key={index}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  className={`
+                  relative group
+                   ${collapsed ? "justify-center px-0" : "gap-4 px-5"}
+                  flex items-center 
+                  py-3.5 my-1.5
+                  rounded-xl
+                  transition-all
+                  ${
+                    isActive
+                      ? "bg-gradient-to-r from-cyan-600/30 to-cyan-500/10 text-white"
+                      : "text-[#9CB3C9] hover:bg-cyan-500/10 hover:text-white"
+                  }
+                `}
+                >
+                  {/* INNER ACTIVE BAR */}
+                  <span
+                    className={`
+                    absolute left-2 top-3 bottom-3 w-[3px] rounded-full
+                    bg-gradient-to-b from-violet-500 via-cyan-400 to-cyan-300
+                    ${isActive ? "opacity-100" : "opacity-0"}
+                  `}
+                  />
+
+                  {/* ICON */}
+                  <Icon
+                    size={collapsed ? 21 : 20}
+                    className={`
+                    ${
+                      isActive
+                        ? "text-cyan-400"
+                        : "text-[#8FA3B8] group-hover:text-cyan-400"
+                    }
+                  `}
+                  />
+
+                  {!collapsed && (
+                    <span className="text-sm font-medium">{item.name}</span>
+                  )}
+                </NavLink>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <div className="border-t border-cyan-500/10 p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 rounded-full bg-cyan-500/20 flex items-center justify-center">
+              <User size={18} className="text-cyan-400" />
+            </div>
+
+            {!collapsed && (
+              <div>
+                <p className="text-white text-sm font-medium">
+                  John Distributor
+                </p>
+                <span className="text-xs text-[#8FAFC9]">Distributor</span>
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => {
+              localStorage.clear();
+              sessionStorage.clear();
+              navigate("/");
+            }}
+            className="
+            flex items-center gap-2
+            w-full
+            bg-red-500/10
+            hover:bg-red-500/20
+            text-red-400
+            py-2.5 px-4
+            rounded-lg
+            transition
+          "
+          >
+            <LogOut size={18} />
+            {!collapsed && <span>Logout</span>}
+          </button>
+        </div>
+      </aside>
+    </>
   );
 };
 
