@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Button } from "./ui/button";
+import { useState } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
@@ -17,182 +16,224 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
+  ChevronRight,
   Menu,
-  X,
 } from "lucide-react";
- 
-const navItems = [
-  { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { name: "Products", path: "/products", icon: Package },
-  { name: "Cart", path: "/cart", icon: ShoppingCart },
-  { name: "Orders", path: "/orders", icon: ClipboardList },
-  { name: "Inventory", path: "/inventory", icon: Warehouse },
-  { name: "GRN", path: "/grn", icon: FileText },
-  { name: "Lead Generation", path: "/leads", icon: Users },
-  { name: "Stock Management", path: "/stock", icon: Boxes },
-  { name: "Warranty Registration", path: "/warranty", icon: ShieldCheck },
-  { name: "Price List", path: "/price-list", icon: List },
-  { name: "Invoice", path: "/invoice", icon: Receipt },
-  { name: "Profile", path: "/profile", icon: User },
-  { name: "Settings", path: "/settings", icon: Settings },
+
+const menuItems = [
+  { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+  { name: "Products", icon: Package, path: "/products" },
+  { name: "Cart", icon: ShoppingCart, path: "/cart" },
+  { name: "Orders", icon: ClipboardList, path: "/orders" },
+  { name: "Inventory", icon: Warehouse, path: "/inventory" },
+  { name: "GRN", icon: FileText, path: "/grn" },
+  { name: "Lead Generation", icon: Users, path: "/leads" },
+  { name: "Stock Management", icon: Boxes, path: "/stock" },
+  { name: "Warranty Registration", icon: ShieldCheck, path: "/warranty" },
+  { name: "Price List", icon: Tag, path: "/price" },
+  { name: "Invoice", icon: Receipt, path: "/invoice" },
+  { name: "Profile", icon: User, path: "/profile" },
+  { name: "Settings", icon: Settings, path: "/settings" },
 ];
- 
-const Sidebar: React.FC = () => {
-  const navigate = useNavigate();
+
+const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
- 
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <>
-      {/* ===== MOBILE TOP BAR ===== */}
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#050b16] border-b border-[#0b1f33]">
-        <div className="text-white font-semibold">DMS Portal</div>
-        <button onClick={() => setMobileOpen(true)}>
-          <Menu className="text-cyan-400" />
+      {/* MOBILE HEADER */}
+      <div className="lg:hidden flex items-center  px-4 py-3 border-b border-cyan-500/20 fixed top-0 left-0 right-0 z-50">
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="
+          w-11 h-11
+          flex items-center justify-center
+          rounded-xl
+          bg-[#071521]
+          border border-cyan-400/40
+          shadow-[0_0_12px_rgba(34,211,238,0.25)]
+          hover:shadow-[0_0_16px_rgba(34,211,238,0.35)]
+          transition
+          "
+        >
+          <Menu className="text-cyan-400" size={20} />
         </button>
       </div>
- 
-      {/* ===== MOBILE OVERLAY ===== */}
+
+      {/* BACKDROP */}
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
         />
       )}
- 
-      {/* ===== SIDEBAR ===== */}
+
+      {/* SIDEBAR */}
       <aside
         className={`
-          fixed lg:static z-50
-          top-0 left-0 h-screen
-          ${collapsed ? "w-[80px]" : "w-[280px]"}
-          bg-gradient-to-b from-[#050b16] via-[#060f1f] to-[#040914]
-          border-r border-[#0b1f33]
-          transition-all duration-300
-          flex flex-col
-          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
-          lg:translate-x-0
+        fixed lg:relative top-0 left-0 z-50
+        h-screen
+        bg-gradient-to-b from-[#050B14] via-[#040A14] to-[#02060C]
+        border-r border-cyan-500/10
+        flex flex-col
+        transition-all duration-300
+        ${collapsed ? "w-[90px]" : "w-[300px]"}
+        ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
-        {/* ===== HEADER ===== */}
-        <div className="flex items-center gap-3 px-6 py-5 border-b border-[#0b1f33]">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#00c2ff] to-[#005cff] flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-lg">▣</span>
+        {/* LOGO */}
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-cyan-500/10">
+          <div
+            className="
+    w-11 h-11
+    rounded-xl
+    bg-gradient-to-br from-violet-500 via-cyan-400 to-blue-500
+    flex items-center justify-center
+    transition-transform duration-300
+    hover:rotate-6 hover:scale-105
+    "
+          >
+            <Package className="text-black" size={22} />
           </div>
- 
+
           {!collapsed && (
-            <div>
-              <h1 className="text-white font-semibold text-lg">DMS Portal</h1>
-              <p className="text-xs text-gray-400">Distributor Management</p>
+            <div className="flex flex-col justify-center text-start">
+              <p className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-cyan-400 to-blue-400 font-semibold text-lg">
+                DMS Portal
+              </p>
+
+              <span className="text-sm text-[#8FAFC9]">
+                Distributor Management
+              </span>
             </div>
           )}
- 
-          {/* Mobile close */}
-          <button
-            onClick={() => setMobileOpen(false)}
-            className="ml-auto lg:hidden"
-          >
-            <X className="text-gray-400" />
-          </button>
         </div>
- 
-        {/* ===== NAV ===== */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 custom-scrollbar">
-          <ul className="space-y-1">
-            {navItems.map((item) => {
+
+        {/* MENU + SCROLL AREA */}
+        <div className="relative flex flex-col flex-1 min-h-0">
+          {/* CENTER ARROW */}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="
+            absolute
+            right-[-14px]
+            top-1/2
+            -translate-y-1/2
+            z-50
+            bg-[#071521]
+            border border-cyan-400/40
+            rounded-full
+            p-1.5
+            hover:bg-cyan-500/10
+            "
+          >
+            {collapsed ? (
+              <ChevronRight className="text-cyan-400" size={18} />
+            ) : (
+              <ChevronLeft className="text-cyan-400" size={18} />
+            )}
+          </button>
+
+          {/* MENU LIST (SCROLL WORKING) */}
+          <div className="sidebar-scroll flex-1 min-h-0 overflow-y-auto px-3 pr-4">
+            {menuItems.map((item, index) => {
               const Icon = item.icon;
+              const isActive = location.pathname.startsWith(item.path);
+
               return (
-                <li key={item.name}>
-                  <NavLink
-                    to={item.path}
-                    onClick={() => setMobileOpen(false)}
-                    className={({ isActive }) =>
-                      `
-                      group flex items-center
-                      ${collapsed ? "justify-center" : "gap-3 px-4"}
-                      py-3 rounded-xl transition-all duration-200
-                      ${
-                        isActive
-                          ? "bg-gradient-to-r from-cyan-500/30 to-cyan-500/10 text-white"
-                          : "text-gray-400 hover:bg-white/5"
-                      }
-                    `
+                <NavLink
+                  key={index}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  className={`
+                  relative group
+                   ${collapsed ? "justify-center px-0" : "gap-4 px-5"}
+                  flex items-center 
+                  py-3.5 my-1.5
+                  rounded-xl
+                  transition-all
+                  ${
+                    isActive
+                      ? "bg-gradient-to-r from-cyan-600/30 to-cyan-500/10 text-white"
+                      : "text-[#9CB3C9] hover:bg-cyan-500/10 hover:text-white"
+                  }
+                `}
+                >
+                  {/* INNER ACTIVE BAR */}
+                  <span
+                    className={`
+                    absolute left-2 top-3 bottom-3 w-[3px] rounded-full
+                    bg-gradient-to-b from-violet-500 via-cyan-400 to-cyan-300
+                    ${isActive ? "opacity-100" : "opacity-0"}
+                  `}
+                  />
+
+                  {/* ICON */}
+                  <Icon
+                    size={collapsed ? 21 : 20}
+                    className={`
+                    ${
+                      isActive
+                        ? "text-cyan-400"
+                        : "text-[#8FA3B8] group-hover:text-cyan-400"
                     }
-                  >
-                    <Icon
-                      size={20}
-                      className="group-hover:text-cyan-400 transition-colors"
-                    />
-                    {!collapsed && (
-                      <span className="group-hover:text-white transition-colors">
-                        {item.name}
-                      </span>
-                    )}
-                  </NavLink>
-                </li>
+                  `}
+                  />
+
+                  {!collapsed && (
+                    <span className="text-sm font-medium">{item.name}</span>
+                  )}
+                </NavLink>
               );
             })}
-          </ul>
-        </nav>
- 
-        {/* ===== FOOTER ===== */}
-        <div className="px-4 py-4 border-t border-[#0b1f33]">
-          <div className="flex items-center gap-3 mb-4 justify-center">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#00c2ff] to-[#7c3aed] flex items-center justify-center shadow-md">
-              <User size={18} className="text-white" />
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <div className="border-t border-cyan-500/10 p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 rounded-full bg-cyan-500/20 flex items-center justify-center">
+              <User size={18} className="text-cyan-400" />
             </div>
- 
+
             {!collapsed && (
               <div>
-                <p className="text-sm text-white font-semibold">
+                <p className="text-white text-sm font-medium">
                   John Distributor
                 </p>
-                <p className="text-xs text-gray-400">Distributor</p>
+                <span className="text-xs text-[#8FAFC9]">Distributor</span>
               </div>
             )}
           </div>
- 
-          {!collapsed && (
-            <Button
-              onClick={() => {
-                localStorage.clear();
-                navigate("/");
-              }}
-              className="w-full rounded-xl bg-red-600/90 hover:bg-red-600 flex items-center gap-2 justify-center"
-            >
-              <LogOut size={18} />
-              Logout
-            </Button>
-          )}
-        </div>
- 
-        {/* ===== COLLAPSE ARROW (DESKTOP ONLY) ===== */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="
-            hidden lg:flex
-            absolute top-1/2 -right-3
-            w-7 h-14
-            rounded-full
-            bg-[#020817]
-            border border-cyan-400/40
-            shadow-[0_0_15px_rgba(34,211,238,0.35)]
-            items-center justify-center
-            text-cyan-400
-            hover:bg-cyan-400 hover:text-black
-            transition-all
+
+          <button
+            onClick={() => {
+              localStorage.clear();
+              sessionStorage.clear();
+              navigate("/");
+            }}
+            className="
+            flex items-center gap-2
+            w-full
+            bg-red-500/10
+            hover:bg-red-500/20
+            text-red-400
+            py-2.5 px-4
+            rounded-lg
+            transition
           "
-        >
-          <ChevronLeft
-            size={18}
-            className={`transition-transform duration-300 ${
-              collapsed ? "rotate-180" : ""
-            }`}
-          />
-        </button>
+          >
+            <LogOut size={18} />
+            {!collapsed && <span>Logout</span>}
+          </button>
+        </div>
       </aside>
     </>
   );
 };
- 
+
 export default Sidebar;
