@@ -11,7 +11,7 @@ import {
   Users,
   Boxes,
   ShieldCheck,
-  List,
+  Tag,
   Receipt,
   User,
   Settings,
